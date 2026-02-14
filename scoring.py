@@ -1,4 +1,5 @@
 from collections import Counter
+import copy
 
 small_straight = [
     [1,2,3,4],
@@ -27,17 +28,20 @@ categories = {
             "fours" : 0,
             "fives" : 0,
             "sixes" : 0
-        }
+        },
+        "bonus" : 0,
+        "sub total" : 0,
+        "total" : 0
     }
 
 def sum_sub(dice, n):
     return sum(x for x in dice if x == n)
 
-def scoring(dice, name, category):
+def scoring(dice, name, category=None):
     counts = Counter(dice)
     
     if category is None:
-        result = categories
+        result = copy.deepcopy(categories)
     else:    
         result = category
     
@@ -59,8 +63,11 @@ def scoring(dice, name, category):
                 
         elif name[1] == "s.straight":
             sorted_dice = sorted(set(dice))
-            if sorted_dice in small_straight:
-                result['main']['s.straight'] = 15
+            
+            for straight in small_straight:
+                if all(n in sorted_dice for n in straight):
+                    result['main']['s.straight'] = 15
+                    break
             else:
                 result['main']['s.straight'] = 0
                 
@@ -95,5 +102,11 @@ def scoring(dice, name, category):
             result['sub']['sixes'] = sum_sub(dice, 6)
         else:
             return None
+        
+    if sum(result['sub'].values()) >= 63:
+        result['bonus'] = 35
+        
+    result['sub total'] = sum(result['sub'].values())
+    result['total'] = sum(result['sub'].values()) + sum(result['main'].values())
         
     return result
