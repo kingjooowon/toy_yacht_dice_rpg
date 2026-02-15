@@ -26,6 +26,7 @@ def play_stage(stage_num, target_score, is_boss=False):
     if is_boss:
         print("\n*** Boss Stage ***")
         stage_boss = random.choice(list(boss_list.keys()))
+        print(f"Stage Boss: {stage_boss}\n")
             
         if stage_boss == "The Roller":
             reroll_num = 1
@@ -49,19 +50,26 @@ def play_stage(stage_num, target_score, is_boss=False):
             print("New Roll: ", dice)
             
         print_available(main_key, sub_key)
-        
-        group = input("Choose group (main/sub): ").strip()
-        if group not in ["main", "sub"]:
-            print("Invalid group!")
-            continue
-        
-        name = input("Choose category name: ").strip()
-        
-        target_list = main_key if group == "main" else sub_key
-        if name not in target_list:
-            print("Invalid or already used category!")
-            continue
-        
+        while True:
+            try:
+                group = input("Choose group (main/sub): ").strip()
+                if group not in ["main", "sub"]:
+                    raise ValueError
+                break
+            except ValueError:
+                print("Invalid group!")
+                
+        while True:
+            try:    
+                name = input("Choose category name: ").strip()
+    
+                target_list = main_key if group == "main" else sub_key
+                if name not in target_list:
+                    raise ValueError
+                break
+            except ValueError:
+                    print("Invalid or already used category!")
+                    
         if blocker:
             for i in range(len(dice)):
                 if (dice[i] % 2) != 0:
@@ -69,7 +77,7 @@ def play_stage(stage_num, target_score, is_boss=False):
         
         score_board = scoring(dice, [group, name], score_board)
                     
-        gained = score_board[group][name] * score_plus(name)
+        gained = int(round(score_board[group][name] * score_plus(name), 1) * 10)
         target_list.remove(name)
         
         total_score += gained
@@ -94,25 +102,41 @@ def run_game():
     while True:
         print(f"\n##### Round {round_num} #####")
         
-        if not play_stage(1, target_score=15 + growing_target_score):
+        if not play_stage(1, target_score=300 + growing_target_score):
             print("\nGame Over")
             return
         
-        if not play_stage(2, target_score=20 + growing_target_score):
+        if not play_stage(2, target_score=500 + growing_target_score):
             print("\nGame Over")
             return
         
-        if not play_stage(3, target_score=30 + growing_target_score, is_boss=True):
+        if not play_stage(3, target_score=800 + growing_target_score, is_boss=True):
             print("\nThe boss defeated you")
             return
         
         print("\nRound Clear!")
         round_num += 1
-        growing_target_score += player['level'] * 10
+        growing_target_score += player['level'] * 200
+        
+        upgrade_pool = [k for k in player.keys() if k != 'level']
+        options = random.choices(upgrade_pool, 3)
+        print(f"\n Choose your reward: {options}")
         
         while True:
             try:
-                level_up = input("Please enter the category you want level up in").strip()
+                level_up = input("Selection: ").strip()
+                if level_up not in options:
+                    raise ValueError
+                
+                player[level_up] += 1
+                print(f"The {level_up} has been leveled up")
+                break
+            except ValueError:
+                print("Please choose one for the options!")
+        
+        while True:
+            try:
+                level_up = input("Please enter the category you want level up in: ").strip()
                 if level_up not in list(player.keys()):
                     raise ValueError
                 

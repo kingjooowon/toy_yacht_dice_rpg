@@ -97,11 +97,11 @@ def scoring(dice, name, category=None):
         elif name[1] == "threes":
             result['sub']['threes'] = sum_sub(dice, 3)
         elif name[1] == "fours":
-            result['sub']['fours'] = sum_sub(dice, 4)
+            result['sub']['fours'] = sum_sub(dice, 4) 
         elif name[1] == "fives":
-            result['sub']['fives'] = sum_sub(dice, 5)
+            result['sub']['fives'] = sum_sub(dice, 5) 
         elif name[1] == "sixes":
-            result['sub']['sixes'] = sum_sub(dice, 6)
+            result['sub']['sixes'] = sum_sub(dice, 6) 
         else:
             return None
         
@@ -109,6 +109,6 @@ def scoring(dice, name, category=None):
         result['bonus'] = 35
         
     result['sub total'] = sum(result['sub'].values())
-    result['total'] = sum(result['sub'].values()) + sum(result['main'].values() + result['bonus'])
+    result['total'] = sum(result['sub'].values()) + sum(result['main'].values()) + result['bonus']
         
     return result
