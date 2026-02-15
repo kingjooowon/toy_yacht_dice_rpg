@@ -52,6 +52,8 @@ def scoring(dice, name, category=None):
         elif name[1] == "4 of a kind":
            if 4 in counts.values():
                result['main']['4 of a kind'] = sum(dice)
+           elif 5 in counts.values():
+               result['main']['4 of a kind'] = sum(dice)
            else:
                result['main']['4 of a kind'] = 0
         
@@ -107,6 +109,6 @@ def scoring(dice, name, category=None):
         result['bonus'] = 35
         
     result['sub total'] = sum(result['sub'].values())
-    result['total'] = sum(result['sub'].values()) + sum(result['main'].values())
+    result['total'] = sum(result['sub'].values()) + sum(result['main'].values() + result['bonus'])
         
     return result
